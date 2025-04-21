@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Quicktext Community Scripts",
+  "description": "A set of Quicktext scripts maintained by the community",
+  "version": "1.1",
+  "author": "Quicktext Community",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "quicktext.scripts@community.jobisoft.de",
+      "strict_min_version": "136.0"
+    }
+  },
+  "background": {
+    "type": "module",
+    "scripts": [
+      "assets/background.js"
+    ]
+  },
+  "permissions": [
+    "compose",
+    "messagesRead",
+    "accountsRead"
+  ],
+  "icons": {
+    "16": "assets/icon16.png",
+    "24": "assets/icon24.png",
+    "32": "assets/icon.png"
+  }
+}

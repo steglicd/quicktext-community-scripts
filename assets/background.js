@@ -3,10 +3,12 @@
 import * as scopes from "./scope.mjs"
 import { SCRIPTS } from "../list-of-scripts.mjs"
 
+const QUICKTEXT_ID = "{8845E3B3-E8FB-40E2-95E9-EC40294818C4}";
+
 browser.runtime.onConnectExternal.addListener(port => {
   port.onMessage.addListener(async info => {
     // Reject message if it it not from Quicktext.
-    if (port.sender.id != "{8845E3B3-E8FB-40E2-95E9-EC40294818C4}") {
+    if (port.sender.id != QUICKTEXT_ID) {
       return;
     }
 
@@ -42,4 +44,36 @@ browser.runtime.onConnectExternal.addListener(port => {
     }
   });
 })
+
+browser.storage.onChanged.addListener(async (changes, areaName) => {
+  if (areaName != "session" || !changes.quicktext) {
+    return;
+  }
+  if (changes.quicktext.newValue && !changes.quicktext.oldValue) {
+    // Inform QT about us.
+    await browser.runtime.sendMessage(
+      QUICKTEXT_ID, 
+      { register_script_addon: browser.runtime.getManifest().short_name }
+    );
+  }
+})
+
+browser.management.onEnabled.addListener(info => setQuicktextState(info, true));
+browser.management.onInstalled.addListener(info => setQuicktextState(info, true));
+browser.management.onDisabled.addListener(info => setQuicktextState(info, false));
+browser.management.onUninstalled.addListener(info => setQuicktextState(info, false));
+
+let all = await browser.management.getAll();
+let info = all.find(e => e.id == QUICKTEXT_ID);
+if (info) {
+  await setQuicktextState(info, info.enabled);
+}
+
+// Update session storage to keep track of Quicktext state. 
+async function setQuicktextState(info, state) {
+  if (info.id != QUICKTEXT_ID) {
+    return;
+  }
+  await browser.storage.session.set({ quicktext: state });
+}
 

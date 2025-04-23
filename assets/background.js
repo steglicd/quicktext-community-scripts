@@ -49,11 +49,14 @@ browser.storage.onChanged.addListener(async (changes, areaName) => {
   if (areaName != "session" || !changes.quicktext) {
     return;
   }
-  if (changes.quicktext.newValue && !changes.quicktext.oldValue) {
+  if (changes.quicktext.newValue) {
     // Inform QT about us.
     await browser.runtime.sendMessage(
       QUICKTEXT_ID, 
-      { register_script_addon: browser.runtime.getManifest().short_name }
+      { 
+        register_script_addon: browser.runtime.getManifest().short_name,
+        available_scripts: Object.keys(SCRIPTS),
+      }
     );
   }
 })

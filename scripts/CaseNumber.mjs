@@ -1,3 +1,22 @@
+/**
+ * Creates a custom subject prefix using current date and time as a case reference
+ * number. The case reference number uses the following format `[Prefix-yyMMddHHmm]`
+ * where the `Prefix` can be specified by a variable.
+ * 
+ * It is added in front of the current subject and as a reference text in the body.
+ * 
+ * Usage:
+ * 
+ * Using this script in your template (where `AREF` can be any other prefix or ommitted):
+ * ```
+ * [[SCRIPT=CaseNumber|AREF]]
+ * ```
+ * would resolve to:
+ * ```
+ * Reference number: AREF-2001311245
+ * ```
+ * Additionally the subject will be prefixed by: `[AREF-2001311245]`
+ */
 export async function CaseNumber() {
     // create timestampID
     let date = new Date();
